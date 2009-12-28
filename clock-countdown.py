@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import serial
 
+print "Incomplete"
+exit()
+
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
 try:
 	x = 999999

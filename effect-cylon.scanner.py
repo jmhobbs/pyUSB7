@@ -10,6 +10,9 @@ def usage ( error=None ):
 		print
 	print "Usage:", sys.argv[0], "[OPTIONS]"
 	print
+	print "DESCRIPTION"
+	print "Uses a dash (-) to create an imitation Larson scanner."
+	print
 	print "OPTIONS"
 	print "-i, --interval   Seconds between movements, expressed in a float value. Default: 0.15"
 	print "-p, --port       The port USB7 is on. Default: /dev/ttyACM0"

@@ -2,27 +2,68 @@
 import serial
 from time import sleep
 import os
+import sys
+import getopt
 
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=0)
+def usage ( error=None ):
+	if None != error:
+		print error
+		print
+	print "Usage:", sys.argv[0], "[OPTIONS]"
+	print
+	print "DESCRIPTION"
+	print "Displays the total uptime of your machine."
+	print
+	print "OPTIONS"
+	print "-f, --file       Path to uptime file. Default: /proc/uptime"
+	print "-i, --interval   The refresh interval, in seconds. Default: 60"
+	print "-p, --port       The port USB7 is on. Default: /dev/ttyACM0"
+	print "-h, --help       Show this message."
+	exit()
+
+uptime_path = '/proc/uptime'
+port = '/dev/ttyACM0'
+sleep_interval = 60
+
+try:
+	options, remainder = getopt.getopt( sys.argv[1:], 'hf:i:p:', [ 'help', 'file=', 'interval=', 'port=' ] )
+except:
+	usage( "Invalid option." )
+
+for opt, arg in options:
+	if opt in ( '-h', '--help' ):
+		usage()
+	elif opt in ( '-i', '--interval' ):
+		try:
+			sleep_interval = float( arg )
+		except:
+			usage( opt + ' must be a floating point number.' )
+	elif opt in ( '-f', '--file' ):
+		uptime_path = arg
+	elif opt in ( '-p', '--port' ):
+		port = arg
+
+ser = serial.Serial( port, 9600, timeout=0 )
 try:
 	while True:
 		uptime = uptime()
-		ser.write( "%02.0d.%02.0d.%02.0d\n" % ( now[3], now[4], now[5] ) )
-		sleep( 60 )
+		if None != uptime:
+			ser.write( "%02.0d.%02.0d.%02.0d\n" % ( uptime[3], uptime[4], uptime[5] ) )
+		sleep( sleep_interval )
 except:
 	ser.close()
 
 # Based on http://thesmithfam.org/blog/2005/11/19/python-uptime-script/
 def uptime():
 	try:
-		f = open( "/proc/uptime" )
+		f = open( uptime_path )
 		contents = f.read().split()
 		f.close()
 	except:
-		print "Can't sync with uptime file: /proc/uptime"
+		print "Can't sync with uptime file:", uptime_path
 		return None
 
-	total_seconds = float(contents[0])
+	total_seconds = float( contents[0] )
 	MINUTE  = 60
 	HOUR = MINUTE * 60
 	DAY = HOUR * 24
