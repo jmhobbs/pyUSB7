@@ -10,7 +10,5 @@ License
 =======
 pyUSB7 scripts are released under the MIT license. See the file "LICENSE" for details.
 
-Links
-=====
 [1]: http://spiffie.org/kits/usb7/ "Spiffie.org"
 [2]: http://pyserial.sourceforge.net/ "pySerial"
