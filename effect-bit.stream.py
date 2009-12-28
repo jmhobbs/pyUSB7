@@ -47,5 +47,5 @@ try:
 		out = out[-5:] + str( i )
 		ser.write( out + "\n" )
 		sleep( sleep_interval )
-except:
+finally:
 	ser.close()

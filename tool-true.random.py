@@ -14,5 +14,5 @@ try:
 	ser.write( "8024 \n" )
 	sleep(0.05)
 	ser.close()
-except:
+finally:
 	ser.close()

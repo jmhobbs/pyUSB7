@@ -38,5 +38,5 @@ try:
 		now = datetime.now().timetuple()
 		ser.write( "%02.0d.%02.0d.%02.0d\n" % ( now[3], now[4], now[5] ) )
 		sleep( 1 )
-except:
+finally:
 	ser.close()

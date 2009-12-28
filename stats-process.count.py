@@ -54,5 +54,5 @@ try:
 		x = g.group( 1 )
 		ser.write( "%s\n" % x )
 		sleep( sleep_interval )
-except:
+finally:
 	ser.close()

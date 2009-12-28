@@ -50,7 +50,7 @@ try:
 		if None != uptime:
 			ser.write( "%02.0d.%02.0d.%02.0d\n" % ( uptime[3], uptime[4], uptime[5] ) )
 		sleep( sleep_interval )
-except:
+finally:
 	ser.close()
 
 # Based on http://thesmithfam.org/blog/2005/11/19/python-uptime-script/

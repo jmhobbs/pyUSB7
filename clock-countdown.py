@@ -10,5 +10,5 @@ try:
 	while x >= 0:
 		ser.write( "%d\n" % x )
 		x = x - 1
-except:
+finally:
 	ser.close()

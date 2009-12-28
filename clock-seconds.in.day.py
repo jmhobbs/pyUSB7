@@ -41,5 +41,5 @@ try:
 		diff = int( now_t - then_t )
 		ser.write( "%d\n" % diff )
 		sleep( 1 )
-except:
+finally:
 	ser.close()
