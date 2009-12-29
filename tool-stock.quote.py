@@ -21,8 +21,8 @@
 # THE SOFTWARE.
 
 import serial
-import urllib2
 from time import sleep
+import urllib2
 import sys
 import getopt
 
@@ -33,55 +33,46 @@ def usage ( error=None ):
 	print "Usage:", sys.argv[0], "[OPTIONS]"
 	print
 	print "DESCRIPTION"
-	print "Displays a REAL random number from random.org!"
+	print "Displays the last trade price of a stock symbol."
 	print
 	print "OPTIONS"
-	print "-u, --upper-bound     The upper bound to pull from. Default: 999999"
-	print "-l, --lower-bound     The lower bound to pull from. Default: -99999"
-	print "-p, --port            The port USB7 is on. Default: /dev/ttyACM0"
-	print "-h, --help            Show this message."
+	print "-s, --symbol     The symbol to check. Default: MSFT"
+	print "-i, --interval   The refresh interval, in seconds. Default: 600"
+	print "-p, --port       The port USB7 is on. Default: /dev/ttyACM0"
+	print "-h, --help       Show this message."
 	exit()
 
-upper_bound = 999999
-lower_bound = -99999
+symbol = "MSFT"
 port = '/dev/ttyACM0'
+sleep_interval = 600
 
 try:
-	options, remainder = getopt.getopt( sys.argv[1:], 'hu:l:p:', [ 'help', 'upper-bound=', 'lower-bound=', 'port=' ] )
+	options, remainder = getopt.getopt( sys.argv[1:], 'hs:i:p:', [ 'help', 'symbol=', 'interval=', 'port=' ] )
 except:
 	usage( "Invalid option." )
 
 for opt, arg in options:
 	if opt in ( '-h', '--help' ):
 		usage()
-	elif opt in ( '-u', '--upper-bound' ):
+	elif opt in ( '-i', '--interval' ):
 		try:
-			upper_bound = int( arg )
+			sleep_interval = float( arg )
 		except:
-			usage( opt + ' must be an integer.' )
-	elif opt in ( '-l', '--lower-bound' ):
-		try:
-			lower_bound = int( arg )
-		except:
-			usage( opt + ' must be an integer.' )
+			usage( opt + ' must be a floating point number.' )
+	elif opt in ( '-s', '--symbol' ):
+		symbol = arg
 	elif opt in ( '-p', '--port' ):
 		port = arg
 
-if lower_bound >= upper_bound:
-	usage( "The lower bound must be larger than the upper bound." )
-
-if lower_bound < -99999:
-	usage( "Lower bound too low. -99999 is the limit." )
-
-if upper_bound > 999999:
-	usage( "Upper bound too high. 999999 is the limit." )
-
 ser = serial.Serial( port, 9600, timeout=0 )
 try:
-	f = urllib2.urlopen( 'http://www.random.org/integers/?num=1&min=%d&max=%d&col=6&base=10&format=plain&rnd=new' % ( lower_bound, upper_bound ) )
-	x = f.read()
-	y = int( x )
-	ser.write( "%d\n" % y )
-	sleep( 0.15 ) # Prevents us from closing before it's finished
+	while True:
+		# URL derived from: http://www.gummy-stuff.org/Yahoo-data.htm
+		f = urllib2.urlopen( 'http://finance.yahoo.com/d/quotes.csv?s=' + symbol + '&f=l1' )
+		x = f.read()
+		# I know. Just ignore it.
+		y = str( float( x.replace( "\r", '' ).replace( "\n", '' ) ) )
+		ser.write( y + "\n" )
+		sleep( sleep_interval )
 finally:
 	ser.close()
