@@ -51,6 +51,8 @@ def usage ( error=None ):
 	print "COUNTDOWN    The time to count down from. The format is: "
 	print "             Days:Hours:Minutes:Seconds"
 	print
+	print "             Maximum: 99999:99:99:99"
+	print
 	print "             Examples:"
 	print "                    12:15  12 Minutes, 20 Seconds"
 	print "                 5:4:0:20  5 Days, 4 Hours, 20 Seconds"
@@ -104,17 +106,42 @@ delta = timedelta(days=storage['days'], hours=storage['hours'], minutes=storage[
 
 then = mktime( ( datetime.now() + delta ).timetuple() )
 
-for i in range( 0, 10 ):
-	now = mktime( datetime.now().timetuple() )
-	print break_time_down( then - now )
-	sleep( 1 )
+ser = serial.Serial( port, 9600, timeout=0 )
+try:
+	while True:
+		now = mktime( datetime.now().timetuple() )
+		s = break_time_down( then - now )
+		string = ''
+		refresh = 1.0
+		if s['days'] > 99999:
+			usage( "COUNTDOWN value too high." )
+		if s['days'] > 99:
+			string = '%dd' % s['days']
+			refresh = 86400
+		elif s['days'] <= 99 and s['days'] >= 10:
+			string = '%dd%dh' % ( s['days'], s['hours'] )
+			refresh = 3600
+		elif s['days'] < 10 and s['days'] > 0:
+			string = '%dd%02.0d.%02.0d' % ( s['days'], s['hours'], s['minutes'] )
+			refresh = 60
+		else:
+			string = '%02.0d.%02.0d.%02.0d' % ( s['hours'], s['minutes'], s['seconds'] )
+			refresh = 1
 
-#ser = serial.Serial( port, 9600, timeout=0 )
-#try:
-	#then
-	#now = mktime( datetime.now().timetuple() )
-	#while x >= 0:
-		#ser.write( "%d\n" % x )
-		#x = x - 1
-#finally:
-	#ser.close()
+		if s['days'] == 0 and s['hours'] == 0 and s['minutes'] == 0 and s['seconds'] == 0:
+			break;
+
+		ser.write( string + "\n" )
+
+		sleep( refresh )
+
+	on = True
+	while True:
+		if on:
+			ser.write( "00.00.00\n" )
+		else:
+			ser.write( "        \n" )
+		on = not on
+		sleep( 1 )
+finally:
+	ser.close()
