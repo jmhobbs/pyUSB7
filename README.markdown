@@ -2,7 +2,7 @@ What is it?
 ===========
 pyUSB7 is a collection of scripts designed for use with the USB7 hardware display kit from [Spiffie.org][1].  These scripts use [pySerial][2] and are designed to run on Linux, but can be run on Windows.
 
-You can see a demo of some of the tools and effects at [http://www.youtube.com/watch?v=-TTQSIhLtIs]
+You can see a demo of some of the tools and effects at [http://www.youtube.com/watch?v=-TTQSIhLtIs](http://www.youtube.com/watch?v=-TTQSIhLtIs)
 
 Why?
 ====
