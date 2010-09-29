@@ -1,0 +1,7 @@
+# This is a list of ATOM URL's for all of your GMail accounts
+accounts = (
+	# Example apps foy your domain URL
+	'https://username@domain.com:password@mail.google.com/a/domain.com/feed/atom',
+	# Example gmail URL
+	'https://username:password@mail.google.com/mail/feed/atom'
+)
